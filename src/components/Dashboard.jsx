@@ -1,8 +1,24 @@
 // src/components/Dashboard.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./Dashboard.css";
 
 function Dashboard({ goals }) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!goals || goals.length === 0) {
+      setLoading(true);
+      fetch("http://localhost:3000/goals")
+        .then((r) => r.json())
+        .then(() => setLoading(false))
+        .catch(() => {
+          setError("Failed to load goals. Please try again later.");
+          setLoading(false);
+        });
+    }
+  }, [goals]);
+
   const totalGoals = goals.length;
   const totalSaved = goals.reduce((sum, g) => sum + g.savedAmount, 0);
   const completed = goals.filter((g) => g.savedAmount >= g.targetAmount).length;
@@ -17,6 +33,8 @@ function Dashboard({ goals }) {
 
   return (
     <div className="dashboard">
+      {loading && <div className="spinner"></div>}
+      {error && <div className="alert-error">{error}</div>}
       <h1>Dashboard Overview</h1>
       <p className="subtitle">Track your savings progress and achievements</p>
 
@@ -46,11 +64,12 @@ function Dashboard({ goals }) {
         ) : (
           <div className="activity-grid">
             {goals.map((goal) => {
-              const percent = Math.min(
-                Math.round((goal.savedAmount / goal.targetAmount) * 100),
-                100
-              );
+              const validTarget = Number(goal.targetAmount) > 0;
+              const percent = validTarget ? Math.min(Math.round((goal.savedAmount / goal.targetAmount) * 100), 100) : 0;
               const isComplete = percent === 100;
+              const circleRadius = 20;
+              const circleCircumference = 2 * Math.PI * circleRadius;
+              const strokeDashoffset = validTarget ? (circleCircumference * (1 - percent / 100)).toString() : circleCircumference.toString();
               return (
                 <div className="goal-item" key={goal.id}>
                   <h4>
@@ -69,8 +88,8 @@ function Dashboard({ goals }) {
                         fill="none"
                         stroke="#34d399"
                         strokeWidth="6"
-                        strokeDasharray={2 * Math.PI * 20}
-                        strokeDashoffset={2 * Math.PI * 20 * (1 - percent / 100)}
+                        strokeDasharray={circleCircumference}
+                        strokeDashoffset={strokeDashoffset}
                         strokeLinecap="round"
                       />
                       <text x="24" y="28" textAnchor="middle" fontSize="1rem" fill="#065f46">{percent}%</text>

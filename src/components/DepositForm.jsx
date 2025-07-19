@@ -7,17 +7,35 @@ function DepositForm({ goals, setGoals }) {
   const [selectedGoalId, setSelectedGoalId] = useState("");
   const [amount, setAmount] = useState("");
   const [alert, setAlert] = useState("");
+  const [alertType, setAlertType] = useState("success");
 
   function handleSubmit(e) {
     e.preventDefault();
-    const goal = goals.find((g) => g.id === parseInt(selectedGoalId));
-    if (!goal) return;
-
+    const goal = goals.find((g) => g.id == selectedGoalId);
+    if (!goal) {
+      setAlertType("error");
+      setAlert("Please select a valid goal.");
+      return;
+    }
+    if (!amount || isNaN(amount) || Number(amount) <= 0) {
+      setAlertType("error");
+      setAlert("Please enter a valid deposit amount.");
+      return;
+    }
+    if (goal.savedAmount >= goal.targetAmount) {
+      setAlertType("error");
+      setAlert("You cannot deposit to a completed goal.");
+      return;
+    }
+    if (Number(goal.savedAmount) + Number(amount) > Number(goal.targetAmount)) {
+      setAlertType("error");
+      setAlert("Deposit exceeds the target amount for this goal.");
+      return;
+    }
     const updatedGoal = {
       ...goal,
       savedAmount: Number(goal.savedAmount || 0) + Number(amount),
     };
-
     fetch(`http://localhost:3000/goals/${goal.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -25,13 +43,12 @@ function DepositForm({ goals, setGoals }) {
     })
       .then((r) => r.json())
       .then(() => {
-        // Fetch latest goals after deposit>> 
         fetch("http://localhost:3000/goals")
           .then((r) => r.json())
           .then((data) => setGoals(data));
+        setAlertType("success");
         setAlert("Deposit added successfully!");
       });
-
     setSelectedGoalId("");
     setAmount("");
   }
@@ -39,13 +56,12 @@ function DepositForm({ goals, setGoals }) {
   return (
     <div className="deposit-form-container">
       {alert && (
-        <div className="alert-success alert-floating" onClick={() => setAlert("")}>{alert} <span style={{cursor:'pointer',marginLeft:'1rem'}}>&times;</span></div>
+        <div className={`alert-floating ${alertType === "error" ? "alert-error" : "alert-success"}`} onClick={() => setAlert("")}>{alert} <span style={{cursor:'pointer',marginLeft:'1rem'}}>&times;</span></div>
       )}
       <h2 className="deposit-title">Make a Deposit</h2>
       <p className="deposit-subtitle">
         Add funds to your savings goals and track your progress
       </p>
-
       <form className="deposit-form" onSubmit={handleSubmit}>
         <label>
           🏁 Select Goal
@@ -61,7 +77,6 @@ function DepositForm({ goals, setGoals }) {
             ))}
           </select>
         </label>
-
         <label>
           💵 Deposit Amount
           <input
@@ -70,10 +85,8 @@ function DepositForm({ goals, setGoals }) {
             onChange={(e) => setAmount(e.target.value)}
           />
         </label>
-
         <button type="submit">📈 Add Deposit</button>
       </form>
-
       <div className="deposit-tips">
         <h3>💡 Deposit Tips</h3>
         <ul>

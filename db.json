@@ -87,7 +87,7 @@
       "targetAmount": 18887,
       "category": "Emergency",
       "targetDate": "2025-07-30",
-      "savedAmount": 0
+      "savedAmount": 4342
     },
     {
       "id": "e9c9",
@@ -111,6 +111,15 @@
       "id": "16b4",
       "name": "test 2",
       "targetAmount": 1000000,
+      "category": "Travel",
+      "deadline": "2025-07-31",
+      "savedAmount": 0,
+      "createdAt": "2025-07-19"
+    },
+    {
+      "id": "0308",
+      "name": "thr",
+      "targetAmount": 5646,
       "category": "Travel",
       "deadline": "2025-07-31",
       "savedAmount": 0,
