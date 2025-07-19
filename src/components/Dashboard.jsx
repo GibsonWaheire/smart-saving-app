@@ -22,11 +22,14 @@ function Dashboard({ goals }) {
   const totalGoals = goals.length;
   const totalSaved = goals.reduce((sum, g) => sum + g.savedAmount, 0);
   const completed = goals.filter((g) => g.savedAmount >= g.targetAmount).length;
+
+  // Only include goals with a valid, non-zero targetAmount
+  const validGoals = goals.filter(g => Number(g.targetAmount) > 0);
   const averageProgress =
-    totalGoals > 0
+    validGoals.length > 0
       ? Math.round(
-          goals.reduce((sum, g) => sum + g.savedAmount / g.targetAmount, 0) /
-            totalGoals *
+          validGoals.reduce((sum, g) => sum + g.savedAmount / g.targetAmount, 0) /
+            validGoals.length *
             100
         )
       : 0;

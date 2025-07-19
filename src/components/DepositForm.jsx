@@ -54,7 +54,17 @@ function DepositForm({ goals, setGoals }) {
   }
 
   return (
-    <div className="deposit-form-container">
+    <div
+      className="deposit-form-container"
+      style={{
+        minHeight: "80vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+      }}
+    >
       {alert && (
         <div className={`alert-floating ${alertType === "error" ? "alert-error" : "alert-success"}`} onClick={() => setAlert("")}>{alert} <span style={{cursor:'pointer',marginLeft:'1rem'}}>&times;</span></div>
       )}
