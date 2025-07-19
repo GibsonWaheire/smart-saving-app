@@ -1,49 +1,75 @@
-# 💰 Smart Goal Planner
+# Smart Goal Planner
 
-A React-based financial planning dashboard that helps users manage multiple savings goals, track progress, and make deposits. Built with `json-server` for local data persistence.
+A modern web app for managing and tracking your financial savings goals. Create, update, delete, and track progress for multiple goals, make deposits, and visualize your savings journey with a beautiful dashboard.
 
----
+## Features
 
-## 📸 Demo Preview
+- **Multiple Savings Goals (CRUD):**
+  - Add new financial goals (name, target amount, category, deadline).
+  - Edit/update existing goals (all fields editable).
+  - Delete goals you no longer need.
+- **Progress Tracking:**
+  - Visual progress bar and percentage for each goal.
+  - Shows total saved, remaining amount, and completion status.
+- **Make Deposits:**
+  - Add deposits to any goal (cannot exceed target or deposit to completed goals).
+  - Progress updates instantly across the app.
+- **Dashboard Overview:**
+  - See total number of goals, total money saved, completed goals, and average progress.
+  - Recent activity grid with progress circles for each goal.
+- **Deadlines & Warnings:**
+  - See how much time is left for each goal.
+  - If a deadline is within 30 days and the goal is not complete, a warning is shown.
+  - If the deadline has passed and the goal is not complete, it is marked as Overdue.
+- **Responsive & Modern UI:**
+  - Consistent color palette and design.
+  - Floating alerts for success and error messages.
+  - Mobile-friendly layout.
 
-![Dashboard Screenshot](./screenshot.png)
+## Getting Started
 
----
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v16+ recommended)
+- [npm](https://www.npmjs.com/) (comes with Node.js)
 
-## 🚀 Features
+### Installation
+1. **Clone the repository:**
+   ```bash
+   git clone <repo-url>
+   cd smart_goal_planner
+   ```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+3. **Start the backend (JSON Server):**
+   ```bash
+   npx json-server --watch db.json --port 3000
+   ```
+4. **Start the frontend (Vite):**
+   ```bash
+   npm run dev
+   ```
+5. Open your browser and go to [http://localhost:5173](http://localhost:5173)
 
-- 🎯 Add, edit, and delete financial goals
-- 💸 Deposit money to specific goals
-- 📊 Track goal progress with dynamic progress bars
-- ⏳ Deadline countdowns with overdue/warning indicators
-- 📈 Overview dashboard with total stats
-- 🧭 Sidebar navigation for a smooth experience
+## Usage
+- **Add Goal:** Go to the Add Goal tab, fill in the details, and submit.
+- **Edit/Delete Goal:** Use the All Goals tab (or add edit buttons as needed) to update or remove goals.
+- **Make Deposit:** Go to Make Deposit, select a goal, enter an amount, and submit. Alerts will guide you if the deposit is invalid.
+- **Dashboard:** See your overall progress, recent activity, and warnings for deadlines.
 
----
+## Technologies Used
+- **React** (Vite)
+- **JSON Server** (for local REST API)
+- **CSS** (custom, responsive, modern)
 
-## 🧑‍💻 Tech Stack
+## Folder Structure
+- `src/components/` — All React components (Dashboard, GoalForm, DepositForm, GoalList, etc.)
+- `db.json` — Local database for goals
+- `public/` — Static assets
 
-- [React](https://reactjs.org/)
-- [JSON Server](https://github.com/typicode/json-server)
-- Plain CSS (custom layout inspired)
+## Contributing
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
----
-
-## 📂 Folder Structure
-
-smart_goal_planner/
-├── public/
-│ └── index.html
-├── src/
-│ ├── components/
-│ │ ├── Sidebar.jsx
-│ │ ├── Dashboard.jsx
-│ │ ├── Overview.jsx
-│ │ ├── GoalForm.jsx
-│ │ ├── DepositForm.jsx
-│ │ └── GoalList.jsx
-│ ├── App.jsx
-│ ├── index.css
-│ └── main.jsx
-├── db.json
-└── README.md
+## License
+[MIT](LICENSE)
