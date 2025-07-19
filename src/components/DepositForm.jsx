@@ -6,6 +6,7 @@ import "./DepositForm.css";
 function DepositForm({ goals, setGoals }) {
   const [selectedGoalId, setSelectedGoalId] = useState("");
   const [amount, setAmount] = useState("");
+  const [alert, setAlert] = useState("");
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -23,9 +24,13 @@ function DepositForm({ goals, setGoals }) {
       body: JSON.stringify(updatedGoal),
     })
       .then((r) => r.json())
-      .then((updated) =>
-        setGoals((prev) => prev.map((g) => (g.id === updated.id ? updated : g)))
-      );
+      .then(() => {
+        // Fetch latest goals after deposit>> 
+        fetch("http://localhost:3000/goals")
+          .then((r) => r.json())
+          .then((data) => setGoals(data));
+        setAlert("Deposit added successfully!");
+      });
 
     setSelectedGoalId("");
     setAmount("");
@@ -33,6 +38,9 @@ function DepositForm({ goals, setGoals }) {
 
   return (
     <div className="deposit-form-container">
+      {alert && (
+        <div className="alert-success alert-floating" onClick={() => setAlert("")}>{alert} <span style={{cursor:'pointer',marginLeft:'1rem'}}>&times;</span></div>
+      )}
       <h2 className="deposit-title">Make a Deposit</h2>
       <p className="deposit-subtitle">
         Add funds to your savings goals and track your progress

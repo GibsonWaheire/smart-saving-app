@@ -8,6 +8,7 @@ function GoalForm({ setGoals }) {
   const [targetAmount, setTargetAmount] = useState("");
   const [category, setCategory] = useState("");
   const [deadline, setDeadline] = useState("");
+  const [alert, setAlert] = useState("");
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -35,11 +36,15 @@ function GoalForm({ setGoals }) {
         setTargetAmount("");
         setCategory("");
         setDeadline("");
+        setAlert("Goal created successfully!");
       });
   }
 
   return (
     <div className="goal-form-container">
+      {alert && (
+        <div className="alert-success alert-floating" onClick={() => setAlert("")}>{alert} <span style={{cursor:'pointer',marginLeft:'1rem'}}>&times;</span></div>
+      )}
       <h2 className="goal-title">Create New Goal</h2>
       <p className="goal-subtitle">
         Set up a new savings goal to track your progress
