@@ -7,19 +7,22 @@ function GoalForm({ setGoals }) {
   const [name, setName] = useState("");
   const [targetAmount, setTargetAmount] = useState("");
   const [category, setCategory] = useState("");
-  const [targetDate, setTargetDate] = useState("");
+  const [deadline, setDeadline] = useState("");
 
   function handleSubmit(e) {
     e.preventDefault();
+
 
     const newGoal = {
       name,
       targetAmount: parseFloat(targetAmount),
       category,
-      targetDate,
+      deadline,
       savedAmount: 0,
+      createdAt: new Date().toISOString().split("T")[0],
     };
 
+    
     fetch("http://localhost:3000/goals", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -31,7 +34,7 @@ function GoalForm({ setGoals }) {
         setName("");
         setTargetAmount("");
         setCategory("");
-        setTargetDate("");
+        setDeadline("");
       });
   }
 
@@ -79,11 +82,11 @@ function GoalForm({ setGoals }) {
         </label>
 
         <label>
-          📅 Target Date
+        📅 Deadline
           <input
             type="date"
-            value={targetDate}
-            onChange={(e) => setTargetDate(e.target.value)}
+                value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
           />
         </label>
 

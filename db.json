@@ -82,12 +82,20 @@
       "createdAt": "2025-07-19"
     },
     {
-      "id": "f3e0",
-      "name": "",
-      "targetAmount": 0,
+      "id": "76b4",
+      "name": "emergency for me ",
+      "targetAmount": 18887,
+      "category": "Emergency",
+      "targetDate": "2025-07-30",
+      "savedAmount": 0
+    },
+    {
+      "id": "e9c9",
+      "name": "going to mombsa",
+      "targetAmount": 10000,
+      "category": "Travel",
+      "deadline": "2025-07-25",
       "savedAmount": 0,
-      "category": "",
-      "deadline": "",
       "createdAt": "2025-07-19"
     }
   ]

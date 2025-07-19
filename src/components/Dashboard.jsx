@@ -1,5 +1,6 @@
 // src/components/Dashboard.jsx
 import React from "react";
+import "./Dashboard.css";
 
 function Dashboard({ goals }) {
   const totalGoals = goals.length;

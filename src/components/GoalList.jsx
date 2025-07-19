@@ -1,56 +1,55 @@
-import "./GoalList.css"; 
+import React from "react";
+import "./GoalList.css";
 
 function GoalList({ goals, setGoals }) {
+  if (!goals || !Array.isArray(goals) || goals.length === 0) {
+    return <p className="no-goals">No goals to display.</p>;
+  }
+
+  function handleDelete(goalId) {
+    fetch(`http://localhost:3000/goals/${goalId}`, {
+      method: "DELETE",
+    })
+      .then(() => {
+        setGoals(prev => prev.filter(goal => goal.id !== goalId));
+      })
+      .catch(error => {
+        console.error("Failed to delete goal:", error);
+      });
+  }
+
   return (
-    <div className="goal-list">
-      <h2>All Goals</h2>
-      <div className="goal-grid">
-        {goals.length === 0 ? (
-          <p>No goals yet. Add one to get started!</p>
-        ) : (
-          goals.map((goal) => (
-            <div className="goal-card" key={goal.id}>
-              <div className="goal-header">
-                <h3>{goal.name}</h3>
-                <button onClick={() => handleDelete(goal.id)}>🗑</button>
-              </div>
+    <div className="goal-cards-container">
+      {goals.map((goal) => (
+        <div className="goal-card" key={goal.id}>
+          <h3>{goal.name || "Unnamed Goal"}</h3>
+          <span className="category">{goal.category || "Uncategorized"}</span>
 
-              <p className="category">{goal.category}</p>
-              <div className="progress-bar-container">
-                <div
-                  className="progress-bar"
-                  style={{
-                    width: `${Math.min((goal.saved / goal.target) * 100, 100)}%`,
-                  }}
-                ></div>
-              </div>
-
-              <div className="goal-amounts">
-                <span>${goal.saved.toLocaleString()}</span>
-                <span>of ${goal.target.toLocaleString()}</span>
-              </div>
-
-              <div className="goal-meta">
-                <p>
-                  📅 Due: {new Date(goal.dueDate).toLocaleDateString()}
-                </p>
-                <p className="status">
-                  {goal.saved >= goal.target
-                    ? "✅ Goal Completed"
-                    : `$${(goal.target - goal.saved).toLocaleString()} remaining`}
-                </p>
-              </div>
+          <div className="progress-bar-container">
+            <label>Progress</label>
+            <div className="progress-bar-bg">
+              <div
+                className="progress-bar-fill"
+                style={{ width: `${(goal.savedAmount / goal.targetAmount) * 100}%` }}
+              ></div>
             </div>
-          ))
-        )}
-      </div>
+            <p>{Math.floor((goal.savedAmount / goal.targetAmount) * 100)}%</p>
+          </div>
+
+          <div className="amount-info">
+            <p><strong>KES {goal.savedAmount?.toLocaleString() || "0"}</strong> of {goal.targetAmount?.toLocaleString() || "0"}</p>
+            <p className="remaining">KES {(goal.targetAmount - goal.savedAmount)?.toLocaleString() || "0"} remaining</p>
+          </div>
+
+          <div className="deadline">
+            <p>📅 {goal.deadline ? `Due ${new Date(goal.deadline).toLocaleDateString()}` : "No deadline"}</p>
+          </div>
+
+          <button className="delete-button" onClick={() => handleDelete(goal.id)}>🗑️ Delete</button>
+        </div>
+      ))}
     </div>
   );
-
-  function handleDelete(id) {
-    fetch(`http://localhost:3000/goals/${id}`, { method: "DELETE" })
-      .then(() => setGoals((prev) => prev.filter((g) => g.id !== id)));
-  }
 }
 
 export default GoalList;
