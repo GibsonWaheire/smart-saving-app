@@ -46,7 +46,7 @@ function GoalForm({ setGoals, goal, onClose, onGoalUpdate }) {
         };
         
         setGoals((prev) => prev.map((g) => (g.id === transformedGoal.id ? transformedGoal : g)));
-        setAlert("Goal updated successfully!");
+        setAlert("✅ Goal updated successfully! Check 'All Goals' to see your changes!");
         if (onClose) onClose();
         if (onGoalUpdate) onGoalUpdate();
       } else {
@@ -75,7 +75,9 @@ function GoalForm({ setGoals, goal, onClose, onGoalUpdate }) {
         setTargetAmount("");
         setCategory("");
         setDeadline("");
-        setAlert("Goal created successfully!");
+        const successMessage = "🎉 Goal created successfully! Check 'All Goals' or 'Overview' to see your new goal!";
+        console.log("Setting alert:", successMessage);
+        setAlert(successMessage);
         if (onGoalUpdate) onGoalUpdate();
       }
     } catch (error) {
@@ -89,7 +91,7 @@ function GoalForm({ setGoals, goal, onClose, onGoalUpdate }) {
     try {
       await goalService.deleteGoal(goal.id);
       setGoals((prev) => prev.filter((g) => g.id !== goal.id));
-      setAlert("Goal deleted successfully!");
+      setAlert("🗑️ Goal deleted successfully! Check 'All Goals' to see your updated list!");
       if (onClose) onClose();
       if (onGoalUpdate) onGoalUpdate();
     } catch (error) {
