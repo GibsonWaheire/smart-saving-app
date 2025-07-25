@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import "./DepositForm.css";
 import { goalService } from "../services/goalService";
 
-function DepositForm({ goals, setGoals, onGoalUpdate }) {
+function DepositForm({ goals, setGoals }) {
   const [selectedGoalId, setSelectedGoalId] = useState("");
   const [amount, setAmount] = useState("");
   const [alert, setAlert] = useState("");
@@ -48,7 +48,6 @@ function DepositForm({ goals, setGoals, onGoalUpdate }) {
       
       setAlertType("success");
       setAlert("Deposit added successfully!");
-      if (onGoalUpdate) onGoalUpdate();
     } catch (error) {
       console.error('Error adding deposit:', error);
       setAlertType("error");

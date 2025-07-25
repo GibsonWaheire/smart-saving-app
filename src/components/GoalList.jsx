@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./GoalList.css";
 import { goalService } from "../services/goalService";
 
-function GoalList({ goals, setGoals, onGoalUpdate }) {
+function GoalList({ goals, setGoals }) {
   const [alert, setAlert] = useState("");
   if (!goals || !Array.isArray(goals) || goals.length === 0) {
     return <p className="no-goals">No goals to display.</p>;
@@ -13,7 +13,6 @@ function GoalList({ goals, setGoals, onGoalUpdate }) {
       await goalService.deleteGoal(goalId);
       setGoals(prev => prev.filter(goal => goal.id !== goalId));
       setAlert("🗑️ Goal deleted successfully!");
-      if (onGoalUpdate) onGoalUpdate();
     } catch (error) {
       console.error("Failed to delete goal:", error);
       setAlert("❌ Failed to delete goal. Please try again.");

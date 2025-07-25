@@ -66,12 +66,12 @@ function App() {
 
       <div className="main-content">
         {activeTab === "overview" && <Dashboard goals={goals} />}
-        {activeTab === "addGoal" && <GoalForm setGoals={setGoals} onGoalUpdate={loadGoals} />}
+        {activeTab === "addGoal" && <GoalForm setGoals={setGoals} />}
         {activeTab === "deposit" && (
-          <DepositForm goals={goals} setGoals={setGoals} onGoalUpdate={loadGoals} />
+          <DepositForm goals={goals} setGoals={setGoals} />
         )}
         {activeTab === "allGoals" && (
-          <GoalList goals={goals} setGoals={setGoals} onGoalUpdate={loadGoals} />
+          <GoalList goals={goals} setGoals={setGoals} />
         )}
       </div>
     </div>

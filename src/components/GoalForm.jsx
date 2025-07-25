@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import "./GoalForm.css";
 import { goalService } from "../services/goalService";
 
-function GoalForm({ setGoals, goal, onClose, onGoalUpdate }) {
+function GoalForm({ setGoals, goal, onClose }) {
   const [name, setName] = useState(goal ? goal.name : "");
   const [targetAmount, setTargetAmount] = useState(goal ? goal.targetAmount : "");
   const [category, setCategory] = useState(goal ? goal.category : "");
@@ -48,7 +48,6 @@ function GoalForm({ setGoals, goal, onClose, onGoalUpdate }) {
         setGoals((prev) => prev.map((g) => (g.id === transformedGoal.id ? transformedGoal : g)));
         setAlert("✅ Goal updated successfully! Check 'All Goals' to see your changes!");
         if (onClose) onClose();
-        if (onGoalUpdate) onGoalUpdate();
       } else {
         // Create new goal
         const newGoal = await goalService.createGoal({
@@ -78,7 +77,6 @@ function GoalForm({ setGoals, goal, onClose, onGoalUpdate }) {
         const successMessage = "🎉 Goal created successfully! Check 'All Goals' or 'Overview' to see your new goal!";
         console.log("Setting alert:", successMessage);
         setAlert(successMessage);
-        if (onGoalUpdate) onGoalUpdate();
       }
     } catch (error) {
       console.error('Error saving goal:', error);
@@ -93,7 +91,6 @@ function GoalForm({ setGoals, goal, onClose, onGoalUpdate }) {
       setGoals((prev) => prev.filter((g) => g.id !== goal.id));
       setAlert("🗑️ Goal deleted successfully! Check 'All Goals' to see your updated list!");
       if (onClose) onClose();
-      if (onGoalUpdate) onGoalUpdate();
     } catch (error) {
       console.error('Error deleting goal:', error);
       setAlert("Failed to delete goal. Please try again.");
