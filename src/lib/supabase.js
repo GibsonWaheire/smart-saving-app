@@ -22,9 +22,15 @@ if (!supabaseUrl || !supabaseAnonKey) {
   // Create a mock client that shows helpful error messages
   supabase = {
     from: () => ({
-      select: () => Promise.reject(new Error('Supabase not configured. Please set up your environment variables.')),
-      insert: () => Promise.reject(new Error('Supabase not configured. Please set up your environment variables.')),
-      update: () => Promise.reject(new Error('Supabase not configured. Please set up your environment variables.')),
+      select: () => ({
+        order: () => Promise.reject(new Error('Supabase not configured. Please set up your environment variables.'))
+      }),
+      insert: () => ({
+        select: () => Promise.reject(new Error('Supabase not configured. Please set up your environment variables.'))
+      }),
+      update: () => ({
+        select: () => Promise.reject(new Error('Supabase not configured. Please set up your environment variables.'))
+      }),
       delete: () => Promise.reject(new Error('Supabase not configured. Please set up your environment variables.'))
     })
   };
