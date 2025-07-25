@@ -2,14 +2,15 @@
 
 import React, { useState } from "react";
 import "./DepositForm.css";
+import { goalService } from "../services/goalService";
 
-function DepositForm({ goals, setGoals }) {
+function DepositForm({ goals, setGoals, onGoalUpdate }) {
   const [selectedGoalId, setSelectedGoalId] = useState("");
   const [amount, setAmount] = useState("");
   const [alert, setAlert] = useState("");
   const [alertType, setAlertType] = useState("success");
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const goal = goals.find((g) => g.id == selectedGoalId);
     if (!goal) {
@@ -32,23 +33,28 @@ function DepositForm({ goals, setGoals }) {
       setAlert("Deposit exceeds the target amount for this goal.");
       return;
     }
-    const updatedGoal = {
-      ...goal,
-      savedAmount: Number(goal.savedAmount || 0) + Number(amount),
-    };
-    fetch(`http://localhost:3000/goals/${goal.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedGoal),
-    })
-      .then((r) => r.json())
-      .then(() => {
-        fetch("http://localhost:3000/goals")
-          .then((r) => r.json())
-          .then((data) => setGoals(data));
-        setAlertType("success");
-        setAlert("Deposit added successfully!");
-      });
+    
+    try {
+      const newSavedAmount = Number(goal.savedAmount || 0) + Number(amount);
+      await goalService.updateSavedAmount(goal.id, newSavedAmount);
+      
+      // Update local state
+      const updatedGoals = goals.map(g => 
+        g.id === goal.id 
+          ? { ...g, savedAmount: newSavedAmount }
+          : g
+      );
+      setGoals(updatedGoals);
+      
+      setAlertType("success");
+      setAlert("Deposit added successfully!");
+      if (onGoalUpdate) onGoalUpdate();
+    } catch (error) {
+      console.error('Error adding deposit:', error);
+      setAlertType("error");
+      setAlert("Failed to add deposit. Please try again.");
+    }
+    
     setSelectedGoalId("");
     setAmount("");
   }

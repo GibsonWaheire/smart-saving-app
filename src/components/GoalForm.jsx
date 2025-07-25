@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import "./GoalForm.css";
+import { goalService } from "../services/goalService";
 
-function GoalForm({ setGoals, goal, onClose }) {
+function GoalForm({ setGoals, goal, onClose, onGoalUpdate }) {
   const [name, setName] = useState(goal ? goal.name : "");
   const [targetAmount, setTargetAmount] = useState(goal ? goal.targetAmount : "");
   const [category, setCategory] = useState(goal ? goal.category : "");
@@ -21,68 +22,80 @@ function GoalForm({ setGoals, goal, onClose }) {
     }
   }, [goal]);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    if (goal) {
-      // Update existing goal
-      const updatedGoal = {
-        ...goal,
-        name,
-        targetAmount: parseFloat(targetAmount),
-        category,
-        deadline,
-      };
-      fetch(`http://localhost:3000/goals/${goal.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedGoal),
-      })
-        .then((r) => r.json())
-        .then((updated) => {
-          setGoals((prev) => prev.map((g) => (g.id === updated.id ? updated : g)));
-          setAlert("Goal updated successfully!");
-          if (onClose) onClose();
+    try {
+      if (goal) {
+        // Update existing goal
+        const updatedGoal = await goalService.updateGoal(goal.id, {
+          name,
+          targetAmount: parseFloat(targetAmount),
+          category,
+          deadline,
         });
-    } else {
-      // Create new goal
-      const newGoal = {
-        name,
-        targetAmount: parseFloat(targetAmount),
-        category,
-        deadline,
-        savedAmount: 0,
-        createdAt: new Date().toISOString().split("T")[0],
-      };
-      fetch("http://localhost:3000/goals", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newGoal),
-      })
-        .then((r) => r.json())
-        .then((newGoal) => {
-          setGoals((prev) => [...prev, newGoal]);
-          setName("");
-          setTargetAmount("");
-          setCategory("");
-          setDeadline("");
-          setAlert("Goal created successfully!");
+        
+        // Transform the updated goal to match expected format
+        const transformedGoal = {
+          id: updatedGoal.id,
+          name: updatedGoal.name,
+          targetAmount: parseFloat(updatedGoal.target_amount),
+          savedAmount: parseFloat(updatedGoal.saved_amount),
+          category: updatedGoal.category,
+          deadline: updatedGoal.deadline,
+          createdAt: updatedGoal.created_at
+        };
+        
+        setGoals((prev) => prev.map((g) => (g.id === transformedGoal.id ? transformedGoal : g)));
+        setAlert("Goal updated successfully!");
+        if (onClose) onClose();
+        if (onGoalUpdate) onGoalUpdate();
+      } else {
+        // Create new goal
+        const newGoal = await goalService.createGoal({
+          name,
+          targetAmount: parseFloat(targetAmount),
+          category,
+          deadline,
+          savedAmount: 0,
         });
+        
+        // Transform the new goal to match expected format
+        const transformedGoal = {
+          id: newGoal.id,
+          name: newGoal.name,
+          targetAmount: parseFloat(newGoal.target_amount),
+          savedAmount: parseFloat(newGoal.saved_amount),
+          category: newGoal.category,
+          deadline: newGoal.deadline,
+          createdAt: newGoal.created_at
+        };
+        
+        setGoals((prev) => [...prev, transformedGoal]);
+        setName("");
+        setTargetAmount("");
+        setCategory("");
+        setDeadline("");
+        setAlert("Goal created successfully!");
+        if (onGoalUpdate) onGoalUpdate();
+      }
+    } catch (error) {
+      console.error('Error saving goal:', error);
+      setAlert("Failed to save goal. Please try again.");
     }
   }
 
-  function handleDelete() {
+  async function handleDelete() {
     if (!goal) return;
-    fetch(`http://localhost:3000/goals/${goal.id}`, {
-      method: "DELETE",
-    })
-      .then(() => {
-        setGoals((prev) => prev.filter((g) => g.id !== goal.id));
-        setAlert("Goal deleted successfully!");
-        if (onClose) onClose();
-      })
-      .catch((error) => {
-        setAlert("Failed to delete goal.");
-      });
+    try {
+      await goalService.deleteGoal(goal.id);
+      setGoals((prev) => prev.filter((g) => g.id !== goal.id));
+      setAlert("Goal deleted successfully!");
+      if (onClose) onClose();
+      if (onGoalUpdate) onGoalUpdate();
+    } catch (error) {
+      console.error('Error deleting goal:', error);
+      setAlert("Failed to delete goal. Please try again.");
+    }
   }
 
   const percent = targetAmount ? Math.min(Math.round((savedAmount / targetAmount) * 100), 100) : 0;

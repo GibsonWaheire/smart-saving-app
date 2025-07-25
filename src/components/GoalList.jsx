@@ -1,21 +1,20 @@
 import React from "react";
 import "./GoalList.css";
+import { goalService } from "../services/goalService";
 
-function GoalList({ goals, setGoals }) {
+function GoalList({ goals, setGoals, onGoalUpdate }) {
   if (!goals || !Array.isArray(goals) || goals.length === 0) {
     return <p className="no-goals">No goals to display.</p>;
   }
 
-  function handleDelete(goalId) {
-    fetch(`http://localhost:3000/goals/${goalId}`, {
-      method: "DELETE",
-    })
-      .then(() => {
-        setGoals(prev => prev.filter(goal => goal.id !== goalId));
-      })
-      .catch(error => {
-        console.error("Failed to delete goal:", error);
-      });
+  async function handleDelete(goalId) {
+    try {
+      await goalService.deleteGoal(goalId);
+      setGoals(prev => prev.filter(goal => goal.id !== goalId));
+      if (onGoalUpdate) onGoalUpdate();
+    } catch (error) {
+      console.error("Failed to delete goal:", error);
+    }
   }
 
   return (
